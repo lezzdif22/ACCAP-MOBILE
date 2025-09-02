@@ -1,0 +1,2 @@
+D:/MOBILE/ACCAPMobile/android/app/.cxx/Debug/1i5y4561/x86/CMakeFiles/edit_cache.dir
+D:/MOBILE/ACCAPMobile/android/app/.cxx/Debug/1i5y4561/x86/CMakeFiles/rebuild_cache.dir
