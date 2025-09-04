@@ -4,6 +4,7 @@ import 'package:firebase/pages/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../services/haptic_service.dart';
+import '../services/talkback_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'personalDetails_page.dart';
 
@@ -124,7 +125,8 @@ class _RegisterPageState extends State<RegisterPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           color: Colors.white,
-          onPressed: () {
+          onPressed: () async {
+            await TalkBackService.instance.speak("Going back from registration");
             Navigator.pop(context);
               MaterialPageRoute(
                 builder: (context) => PersonalDetailsPage(

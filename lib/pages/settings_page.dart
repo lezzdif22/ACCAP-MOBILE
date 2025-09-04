@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/haptic_service.dart';
+import '../services/talkback_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../components/text_size.dart';
 import 'login_page.dart';
@@ -44,45 +45,61 @@ class SettingsPage extends StatelessWidget {
         ),
         backgroundColor: Color.fromARGB(255, 0, 48, 96),
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color.fromARGB(255, 250, 250, 250), size: 30),
-          onPressed: () => Navigator.pop(context),
+        leading: Semantics(
+          label: "Back button",
+          hint: "Go back to previous page",
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Color.fromARGB(255, 250, 250, 250), size: 30),
+            onPressed: () async {
+              HapticService.instance.buttonPress();
+              await TalkBackService.instance.speak("Going back from settings");
+              Navigator.pop(context);
+            },
+          ),
         ),
       ),
       body: ListView(
         children: [
-          ListTile(
-            leading: Icon(Icons.person),
-            title: Text('Account Details',style: TextStyle(fontSize: fontSize),),
-            trailing: Icon(Icons.arrow_forward_ios),
-            onTap: () {
-              HapticService.instance.selection();
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AccountSettingsPage()),
-              );
-            },
+          Semantics(
+            label: "Account Details",
+            hint: "View and edit your account information",
+            child: ListTile(
+              leading: Icon(Icons.person),
+              title: Text('Account Details',style: TextStyle(fontSize: fontSize),),
+              trailing: Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                HapticService.instance.buttonPress();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AccountSettingsPage()),
+                );
+              },
+            ),
           ),
-          ListTile(
-            leading: const Icon(Icons.account_circle),
-            title: Text('Profile', style: TextStyle(fontSize: fontSize)),
-            trailing: const Icon(Icons.arrow_forward_ios),
-            onTap: () {
-              HapticService.instance.selection();
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ProfilePage(userDetails: userDetails),
-                ),
-              );
-            },
+          Semantics(
+            label: "Profile",
+            hint: "View and edit your profile information",
+            child: ListTile(
+              leading: const Icon(Icons.account_circle),
+              title: Text('Profile', style: TextStyle(fontSize: fontSize)),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                HapticService.instance.buttonPress();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfilePage(userDetails: userDetails),
+                  ),
+                );
+              },
+            ),
           ),
           ListTile(
             leading: Icon(Icons.format_size),
             title: Text('Personalization',style: TextStyle(fontSize: fontSize),),
             trailing: Icon(Icons.arrow_forward_ios),
             onTap: () {
-              HapticService.instance.selection();
+              HapticService.instance.buttonPress();
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => PersonalizationSettingsPage()),
@@ -217,7 +234,11 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 30),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () async { 
+            HapticService.instance.buttonPress(); 
+            await TalkBackService.instance.speak("Going back from account settings");
+            Navigator.pop(context); 
+          },
         ),
       ),
       body: _isLoading
@@ -364,7 +385,11 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 30),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () async { 
+            HapticService.instance.buttonPress(); 
+            await TalkBackService.instance.speak("Going back from change email");
+            Navigator.pop(context); 
+          },
         ),
       ),
       body: _isLoading
@@ -518,7 +543,11 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 30),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () async { 
+            HapticService.instance.buttonPress(); 
+            await TalkBackService.instance.speak("Going back from change password");
+            Navigator.pop(context); 
+          },
         ),
       ),
       body: _isLoading
@@ -694,7 +723,11 @@ class _PersonalizationSettingsPageState extends State<PersonalizationSettingsPag
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 30),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () async { 
+            HapticService.instance.buttonPress(); 
+            await TalkBackService.instance.speak("Going back from personalization settings");
+            Navigator.pop(context); 
+          },
         ),
       ),
       body: Padding(
@@ -730,31 +763,40 @@ class _PersonalizationSettingsPageState extends State<PersonalizationSettingsPag
             ),
             const SizedBox(height: 24),
             // Haptics Switch
-            SwitchListTile(
-              title: const Text('Haptics'),
-              value: _hapticsOn,
-              onChanged: (value) async {
-                await HapticService.instance.setEnabled(value);
-                final prefs = await SharedPreferences.getInstance();
-                await prefs.setBool('haptics_enabled', value);
-                setState(() {
-                  _hapticsOn = value;
-                });
-              },
-              activeColor: Color.fromARGB(255, 0, 48, 96),
+            Semantics(
+              label: _hapticsOn ? "Haptics enabled" : "Haptics disabled",
+              hint: "Toggle haptic feedback on or off",
+              child: SwitchListTile(
+                title: const Text('Haptics'),
+                value: _hapticsOn,
+                onChanged: (value) async {
+                  await HapticService.instance.setEnabled(value);
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.setBool('haptics_enabled', value);
+                  setState(() {
+                    _hapticsOn = value;
+                  });
+                },
+                activeColor: Color.fromARGB(255, 0, 48, 96),
+              ),
             ),
             // TalkBack Switch
-            SwitchListTile(
-              title: const Text('TalkBack'),
-              value: _talkBackOn,
-              onChanged: (value) async {
-                final prefs = await SharedPreferences.getInstance();
-                await prefs.setBool('talkback_enabled', value);
-                setState(() {
-                  _talkBackOn = value;
-                });
-              },
-              activeColor: Color.fromARGB(255, 0, 48, 96),
+            Semantics(
+              label: _talkBackOn ? "TalkBack enabled" : "TalkBack disabled",
+              hint: "Toggle accessibility screen reader on or off",
+              child: SwitchListTile(
+                title: const Text('TalkBack'),
+                value: _talkBackOn,
+                onChanged: (value) async {
+                  await TalkBackService.instance.setEnabled(value);
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.setBool('talkback_enabled', value);
+                  setState(() {
+                    _talkBackOn = value;
+                  });
+                },
+                activeColor: Color.fromARGB(255, 0, 48, 96),
+              ),
             ),
             const SizedBox(height: 24),
             Center(

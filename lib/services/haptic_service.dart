@@ -52,6 +52,19 @@ class HapticService {
   _maybeVibrate(80);
   }
 
+  /// Button press feedback with 300ms vibration
+  void buttonPress() {
+    if (!_enabled) return;
+    debugPrint('HapticService: buttonPress() called');
+    try {
+      HapticFeedback.selectionClick();
+    } catch (e) {
+      debugPrint('HapticService: buttonPress HapticFeedback error: $e');
+    }
+    // Add 300ms vibration for button feedback
+    _maybeVibrate(300);
+  }
+
   void heavyImpactWithVibration() async {
     if (!_enabled) return;
     debugPrint('HapticService: heavyImpactWithVibration() called');

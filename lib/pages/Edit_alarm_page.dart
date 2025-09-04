@@ -124,7 +124,7 @@ class _EditAlarmPageState extends State<EditAlarmPage> {
           decoration: InputDecoration(labelText: "Alarm Label"),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text("Cancel")),
+          TextButton(onPressed: () { HapticService.instance.buttonPress(); Navigator.pop(context); }, child: Text("Cancel")),
           TextButton(
             onPressed: () {
               setState(() => _label = labelController.text.trim());
@@ -177,7 +177,7 @@ class _EditAlarmPageState extends State<EditAlarmPage> {
         );
       },
     );
-  if (picked != null) { HapticService.instance.selection(); setState(() => onSelected(picked)); }
+  if (picked != null) { HapticService.instance.buttonPress(); setState(() => onSelected(picked)); }
   }
 
   Future<void> _pickImage() async {
@@ -189,7 +189,7 @@ class _EditAlarmPageState extends State<EditAlarmPage> {
         imageQuality: 85,
       );
       if (image != null) {
-  HapticService.instance.selection();
+  HapticService.instance.buttonPress();
         setState(() {
           _alarmImage = File(image.path);
         });
@@ -265,7 +265,7 @@ class _EditAlarmPageState extends State<EditAlarmPage> {
         backgroundColor: Color.fromARGB(255, 250, 250, 250),
         actions: [
           TextButton(
-            onPressed: () { HapticService.instance.lightImpact(); _saveEditedAlarm(); },
+            onPressed: () { HapticService.instance.buttonPress(); _saveEditedAlarm(); },
             child: Text("Save", style: TextStyle(color: Colors.orange, fontSize: 18)),
           ),
         ],
@@ -313,14 +313,14 @@ class _EditAlarmPageState extends State<EditAlarmPage> {
                   ),
                 IconButton(
                   icon: Icon(Icons.add_photo_alternate),
-                  onPressed: () { HapticService.instance.selection(); _pickImage(); },
+                  onPressed: () { HapticService.instance.buttonPress(); _pickImage(); },
                 ),
               ],
             ),
           ),
 
           if (_alarmType == "Medication") ...[
-            ListTile(title: Text("Label"), subtitle: Text(_label), trailing: Icon(Icons.edit), onTap: () { HapticService.instance.selection(); _editLabel(); }),
+            ListTile(title: Text("Label"), subtitle: Text(_label), trailing: Icon(Icons.edit), onTap: () { HapticService.instance.buttonPress(); _editLabel(); }),
             ListTile(
               title: Text("Repeat Interval"),
               subtitle: Text(_repeatInterval),
@@ -336,7 +336,7 @@ class _EditAlarmPageState extends State<EditAlarmPage> {
                 title: Text("Custom Repeat Time"),
                 subtitle: Text("Every $_customRepeatMinutes minutes"),
                 trailing: Icon(Icons.timer),
-                onTap: () { HapticService.instance.selection(); setState(() => _customRepeatMinutes += 5); },
+                onTap: () { HapticService.instance.buttonPress(); setState(() => _customRepeatMinutes += 5); },
               ),
             SwitchListTile(
               title: Text("No Stop (24hr)"),
@@ -369,7 +369,7 @@ class _EditAlarmPageState extends State<EditAlarmPage> {
             title: Text("Ringtone"),
             subtitle: Text(getSelectedRingtoneName()),
             trailing: Icon(Icons.arrow_forward_ios),
-            onTap: () { HapticService.instance.selection(); _pickRingtone(); },
+            onTap: () { HapticService.instance.buttonPress(); _pickRingtone(); },
           ),
 
           SwitchListTile(

@@ -33,7 +33,7 @@ class _TTSPageState extends State<TTSPage> {
     List<dynamic>? voices = await flutterTts.getVoices;
    if (voices!.isNotEmpty) {
   setState(() {
-    _selectedVoice = voices!.first['name'] ?? '';
+    _selectedVoice = voices.first['name'] ?? '';
     flutterTts.setVoice({"name": _selectedVoice!});
   });
 }

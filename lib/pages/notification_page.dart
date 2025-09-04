@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/haptic_service.dart';
+import '../services/talkback_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:async/async.dart';
@@ -150,7 +151,7 @@ final allNotifications = [
       content: Text(displayMessage),
       actions: [
         TextButton(
-          onPressed: () { HapticService.instance.selection(); Navigator.pop(context); },
+          onPressed: () { HapticService.instance.buttonPress(); Navigator.pop(context); },
           child: const Text("Close"),
         ),
       ],
@@ -187,9 +188,17 @@ final allNotifications = [
         ),
         backgroundColor: Color.fromARGB(255, 0, 48, 96),
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 30),
-          onPressed: () => Navigator.pop(context),
+        leading: Semantics(
+          label: "Back button",
+          hint: "Go back to previous page",
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white, size: 30),
+            onPressed: () async {
+              HapticService.instance.buttonPress();
+              await TalkBackService.instance.speak("Going back from notifications");
+              Navigator.pop(context);
+            },
+          ),
         ),
       ),
 body: StreamBuilder<List<Map<String, dynamic>>>(

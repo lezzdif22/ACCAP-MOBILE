@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase/components/text_field.dart';
 import 'package:flutter/services.dart';
 import '../services/haptic_service.dart';
+import '../services/talkback_service.dart';
 import 'package:intl/intl.dart';
 
 class PersonalDetailsPage extends StatefulWidget {
@@ -173,7 +174,10 @@ class _PersonalDetailsPageState extends State<PersonalDetailsPage> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () async {
+            await TalkBackService.instance.speak("Going back from personal details");
+            Navigator.pop(context);
+          },
         ),
       ),
       body: SafeArea(

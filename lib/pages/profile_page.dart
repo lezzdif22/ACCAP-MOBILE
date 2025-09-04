@@ -3,6 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase/pages/resume_viewer.dart';
 import 'package:flutter/material.dart';
 import '../services/haptic_service.dart';
+import '../services/talkback_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
@@ -338,9 +339,17 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         backgroundColor: Color.fromARGB(255, 0, 48, 96),
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 30),
-          onPressed: () { HapticService.instance.selection(); Navigator.pop(context); },
+        leading: Semantics(
+          label: "Back button",
+          hint: "Go back to settings",
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white, size: 30),
+            onPressed: () async { 
+              HapticService.instance.buttonPress(); 
+              await TalkBackService.instance.speak("Going back to settings");
+              Navigator.pop(context); 
+            },
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -353,7 +362,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 GestureDetector(
                   onTap: () {
                     if (isEditing || coverImageUrl == null || coverImageUrl!.isEmpty) {
-                      HapticService.instance.selection();
+                      HapticService.instance.buttonPress();
                       uploadImage(true);
                     } else {
                       Navigator.push(
@@ -395,7 +404,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   bottom: -50,
                   child: GestureDetector(
                     onTap: () {
-                      HapticService.instance.selection();
+                      HapticService.instance.buttonPress();
                       if (isEditing || profileImageUrl == null || profileImageUrl!.isEmpty) {
                         uploadImage(false);
                       } else {
@@ -724,7 +733,7 @@ class _ProfilePageState extends State<ProfilePage> {
         content: const Text("Are you sure you want to log out?"),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
+            onPressed: () { HapticService.instance.buttonPress(); Navigator.pop(context, false); },
             child: const Text("Cancel"),
           ),
           TextButton(

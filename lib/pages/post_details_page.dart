@@ -1,6 +1,8 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import '../services/haptic_service.dart';
+import '../services/talkback_service.dart';
+import '../components/talkback_longpress.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
@@ -149,7 +151,7 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
         onPressed: (attendStatus[postId] ?? false)
             ? null
             : () async {
-          HapticService.instance.lightImpact();
+          HapticService.instance.buttonPress();
           await _firestore.collection('notifications').add({
             'postId': postId,
             'user': _auth.currentUser?.email,
@@ -169,7 +171,7 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
     } else if (postType == 'Job Offering') {
       return ElevatedButton(
         onPressed: () async {
-          HapticService.instance.selection();
+          HapticService.instance.buttonPress();
           await uploadResume(postId);
         },
         style: ElevatedButton.styleFrom(
@@ -182,7 +184,7 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
         onPressed: (receivedStatus[postId] ?? false)
             ? null
             : () async {
-          HapticService.instance.selection();
+          HapticService.instance.buttonPress();
           await _firestore.collection('notifications').add({
             'postId': postId,
             'user': _auth.currentUser?.email,
@@ -244,12 +246,20 @@ Widget build(BuildContext context) {
     backgroundColor: const Color.fromARGB(255, 250, 250, 250),
     appBar: AppBar(
       backgroundColor: const Color.fromARGB(255, 0, 48, 96),
-      leading: IconButton(
-        icon: const Icon(
-          Icons.arrow_back,
-          color: Color.fromARGB(255, 250, 250, 250),
+      leading: Semantics(
+        label: "Back button",
+        hint: "Go back to posts list",
+        child: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Color.fromARGB(255, 250, 250, 250),
+          ),
+          onPressed: () async {
+            HapticService.instance.buttonPress();
+            await TalkBackService.instance.speak("Going back to posts list");
+            Navigator.of(context).pop();
+          },
         ),
-        onPressed: () => Navigator.of(context).pop(),
       ),
     ),
     body: SafeArea(
@@ -340,12 +350,18 @@ Widget build(BuildContext context) {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        widget.post['title'],
-                        style:  TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
+                      TalkBackLongPress(
+                        text: "Post title: ${widget.post['title']}",
+                        child: Text(
+                          widget.post['title'],
+                          style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
+                        ),
                       ),
                       const SizedBox(height: 10),
-                      Text(widget.post['content'],style:  TextStyle(fontSize: fontSize)),
+                      TalkBackLongPress(
+                        text: "Post content: ${widget.post['content']}",
+                        child: Text(widget.post['content'], style: TextStyle(fontSize: fontSize)),
+                      ),
                       const SizedBox(height: 20),
                       if (postType == 'Seminar' || postType == 'Job Offering')
                         Padding(
@@ -435,15 +451,27 @@ Widget build(BuildContext context) {
                                   ],
                                 ),
                                 const SizedBox(height: 6),
-                                Text(
-                                  comment['comment'] ?? "No Comment",
-                                  style: const TextStyle(fontSize: 14),
+                                TalkBackLongPress(
+                                  text: "Comment by ${comment['user'] ?? "Anonymous"}: ${comment['comment'] ?? "No Comment"}",
+                                  child: Container(
+                                    padding: EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      comment['comment'] ?? "No Comment",
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                  ),
                                 ),
                                 const SizedBox(height: 8),
                                 Align(
                                   alignment: Alignment.centerRight,
                                   child: TextButton.icon(
-                                    onPressed: () => _showReplyDialog(postId, comment.id),
+                                    onPressed: () async {
+                                      await TalkBackService.instance.speak("Reply to comment");
+                                      _showReplyDialog(postId, comment.id);
+                                    },
                                     icon: const Icon(Icons.reply, size: 16, color: Colors.blue),
                                     label: const Text(
                                       "Reply",
@@ -557,7 +585,7 @@ Widget build(BuildContext context) {
             ),
             TextButton(
               onPressed: () {
-                HapticService.instance.selection();
+                HapticService.instance.buttonPress();
                 addReply(postId, commentId, replyController.text);
                 Navigator.pop(context);
               },
@@ -652,21 +680,29 @@ Widget _buildCommentInput(String postId) {
             const Icon(Icons.comment, color: Colors.grey),
             const SizedBox(width: 8),
             Expanded(
-              child: TextField(
-                controller: _commentController,
-                maxLength: _maxChars,
-                decoration: const InputDecoration(
-                  hintText: "Write a comment...",
-                  counterText: "",
-                  isDense: true,
-                  border: InputBorder.none,
-                  focusedBorder: InputBorder.none,
+              child: Semantics(
+                label: "Comment text field",
+                hint: "Write a comment here",
+                child: TextField(
+                  controller: _commentController,
+                  maxLength: _maxChars,
+                  decoration: const InputDecoration(
+                    hintText: "Write a comment...",
+                    counterText: "",
+                    isDense: true,
+                    border: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                  ),
                 ),
               ),
             ),
             const SizedBox(width: 8),
             IconButton(
-              onPressed: isOverLimit ? null : () { HapticService.instance.selection(); _addComment(postId); },
+              onPressed: isOverLimit ? null : () async { 
+                HapticService.instance.buttonPress(); 
+                await TalkBackService.instance.speak("Sending comment");
+                _addComment(postId); 
+              },
               icon: Icon(
                 Icons.send_rounded,
                 color: isOverLimit ? Colors.grey : Colors.blue,

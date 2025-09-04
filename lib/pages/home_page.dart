@@ -2,7 +2,9 @@ import 'package:firebase/pages/request_assistance_page.dart';
 import 'package:firebase/pages/settings_page.dart';
 import 'package:firebase/pages/ticket_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import '../services/haptic_service.dart';
+import '../services/talkback_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'announcement_page.dart';
@@ -122,19 +124,29 @@ class _UserHomePageState extends State<UserHomePage> {
           ),
         ),
         actions: [
-          IconButton(
-            onPressed: () {
-              HapticService.instance.selection();
-              goToNotifications();
-            },
-            icon: const Icon(Icons.notifications, size: 30),
+          Semantics(
+            label: "Notifications",
+            hint: "View your notifications",
+            child: IconButton(
+              onPressed: () {
+                HapticService.instance.buttonPress();
+                TalkBackService.instance.speak("Notifications button pressed");
+                goToNotifications();
+              },
+              icon: const Icon(Icons.notifications, size: 30),
+            ),
           ),
-          IconButton(
-            onPressed: () {
-              HapticService.instance.selection();
-              goToSettings();
-            },
-            icon: const Icon(Icons.settings, size: 30),
+          Semantics(
+            label: "Settings",
+            hint: "Open app settings",
+            child: IconButton(
+              onPressed: () {
+                HapticService.instance.buttonPress();
+                TalkBackService.instance.speak("Settings button pressed");
+                goToSettings();
+              },
+              icon: const Icon(Icons.settings, size: 30),
+            ),
           ),
         ],
       ),
@@ -147,7 +159,14 @@ class _UserHomePageState extends State<UserHomePage> {
         currentIndex: _selectedIndex,
         backgroundColor: const Color.fromARGB(255, 250, 250, 250),
         onTap: (index) {
-          HapticService.instance.selection();
+          HapticService.instance.buttonPress();
+          
+          // TalkBack announcement for navigation
+          final tabNames = ["Assistance", "Tools", "Announcements", "My Requests"];
+          if (index < tabNames.length) {
+            TalkBackService.instance.speak("${tabNames[index]} tab selected");
+          }
+          
           setState(() {
             _selectedIndex = index;
           });
@@ -158,21 +177,37 @@ class _UserHomePageState extends State<UserHomePage> {
         unselectedIconTheme: IconThemeData(size: 22),
         selectedLabelStyle: TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
         unselectedLabelStyle: TextStyle(fontSize: 9),
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.emoji_people),
+            icon: Semantics(
+              label: "Request assistance tab",
+              hint: "Navigate to request assistance page",
+              child: Icon(Icons.emoji_people),
+            ),
             label: 'Assistance',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.build_circle),
+            icon: Semantics(
+              label: "Tools tab",
+              hint: "Navigate to tools page",
+              child: Icon(Icons.build_circle),
+            ),
             label: 'Tools',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.announcement),
+            icon: Semantics(
+              label: "Announcements tab",
+              hint: "Navigate to announcements page",
+              child: Icon(Icons.announcement),
+            ),
             label: 'Announcements',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.confirmation_num),
+            icon: Semantics(
+              label: "My requests tab",
+              hint: "Navigate to my requests page",
+              child: Icon(Icons.confirmation_num),
+            ),
             label: 'My Requests',
           ),
         ],

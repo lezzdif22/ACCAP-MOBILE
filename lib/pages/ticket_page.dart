@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../services/haptic_service.dart';
+import '../services/talkback_service.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
@@ -124,7 +125,7 @@ class _TicketsPageState extends State<TicketsPage> {
                       style: TextStyle(color: statusColor, fontWeight: FontWeight.bold, fontSize: fontSize-3),
                     ),
                   ),
-                  onTap: () { HapticService.instance.selection(); Navigator.push(
+                  onTap: () { HapticService.instance.buttonPress(); Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => TicketDetailPage(request: request),
@@ -185,7 +186,7 @@ class _TicketDetailPageState extends State<TicketDetailPage> {
         "userEmail": currentUser!.email,
       });
 
-  HapticService.instance.lightImpact();
+  HapticService.instance.buttonPress();
   _commentController.clear();
     }
   }
@@ -200,7 +201,7 @@ class _TicketDetailPageState extends State<TicketDetailPage> {
     setState(() {
       isOpen = newStatus == "Open";
     });
-  HapticService.instance.selection();
+  HapticService.instance.buttonPress();
   }
 
   @override
@@ -249,12 +250,20 @@ class _TicketDetailPageState extends State<TicketDetailPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 0, 48, 96),
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Color.fromARGB(255, 250, 250, 250),
+        leading: Semantics(
+          label: "Back button",
+          hint: "Go back to previous page",
+          child: IconButton(
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Color.fromARGB(255, 250, 250, 250),
+            ),
+            onPressed: () async {
+              HapticService.instance.buttonPress();
+              await TalkBackService.instance.speak("Going back from tickets");
+              Navigator.of(context).pop();
+            },
           ),
-          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: Container(

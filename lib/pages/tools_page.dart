@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../components/text_size.dart';
+import '../services/haptic_service.dart';
+import '../services/talkback_service.dart';
 import 'stt_page.dart';
 import 'alarm_page.dart';
 import 'tts_page.dart';
@@ -42,6 +44,13 @@ class _UserToolsPageState extends State<UserToolsPage> with SingleTickerProvider
               indicatorColor: Colors.black,
               labelColor: Colors.black,
               unselectedLabelColor: Colors.grey,
+              onTap: (index) {
+                HapticService.instance.buttonPress();
+                final tabNames = ["Speech to Text", "Text to Speech", "Reminders"];
+                if (index < tabNames.length) {
+                  TalkBackService.instance.speak("${tabNames[index]} tab selected");
+                }
+              },
               tabs: [
                 Tab(
                   child: Text(

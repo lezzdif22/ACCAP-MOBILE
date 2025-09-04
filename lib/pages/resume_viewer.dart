@@ -3,6 +3,8 @@ import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
+import '../services/haptic_service.dart';
+import '../services/talkback_service.dart';
 
 class ResumeViewer extends StatefulWidget {
   final String pdfUrl;
@@ -62,7 +64,11 @@ class _ResumeViewerState extends State<ResumeViewer> {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 30),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () { 
+            HapticService.instance.buttonPress(); 
+            TalkBackService.instance.speak("Going back from resume viewer");
+            Navigator.pop(context); 
+          },
         ),
       ),
         backgroundColor : Color.fromARGB(255, 250, 250, 250),

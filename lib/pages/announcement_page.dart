@@ -1,5 +1,4 @@
 import 'package:firebase/pages/post_details_page.dart';
-import 'package:firebase/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../components/text_size.dart';
 import '../services/haptic_service.dart';
+import '../services/talkback_service.dart';
 
 class UserAnnouncementPage extends StatefulWidget {
   const UserAnnouncementPage({super.key});
@@ -128,7 +128,7 @@ class _UserAnnouncementPageState extends State<UserAnnouncementPage>
         onPressed: (attendStatus[postId] ?? false)
             ? null
             : () async {
-          HapticService.instance.lightImpact();
+          HapticService.instance.buttonPress();
           await _firestore.collection('notifications').add({
             'postId': postId,
             'user': _auth.currentUser?.email,
@@ -241,6 +241,13 @@ class _UserAnnouncementPageState extends State<UserAnnouncementPage>
                   labelColor: Colors.black, // Selected tab text color
                   unselectedLabelColor: Colors.grey, // Unselected tab text color
                   indicatorColor: Colors.black, // Selected tab underline color
+                  onTap: (index) {
+                    HapticService.instance.buttonPress();
+                    final tabNames = ["General announcements", "Seminar announcements", "Job offer announcements"];
+                    if (index < tabNames.length) {
+                      TalkBackService.instance.speak("${tabNames[index]} tab selected");
+                    }
+                  },
                   tabs: [
                     Tab(
                       child: Text(
@@ -317,7 +324,7 @@ class _UserAnnouncementPageState extends State<UserAnnouncementPage>
       margin: const EdgeInsets.all(10),
       color: const Color.fromARGB(255, 250, 250, 250),  // Set background color
       child: InkWell(
-        onTap: () { HapticService.instance.selection(); Navigator.push(
+        onTap: () { HapticService.instance.buttonPress(); Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => PostDetailsPage(post: post),

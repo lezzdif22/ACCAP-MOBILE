@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../services/haptic_service.dart';
-import 'package:flutter/foundation.dart';
 
 class TestHapticsPage extends StatelessWidget {
   const TestHapticsPage({super.key});
@@ -21,7 +20,7 @@ class TestHapticsPage extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 debugPrint('TestHapticsPage: Calling HapticService.selection() enabled=${HapticService.instance.enabled}');
-                HapticService.instance.selection();
+                HapticService.instance.buttonPress();
               },
               child: const Text('Haptic selection'),
             ),
@@ -29,7 +28,7 @@ class TestHapticsPage extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 debugPrint('TestHapticsPage: Calling HapticService.lightImpact() enabled=${HapticService.instance.enabled}');
-                HapticService.instance.lightImpact();
+                HapticService.instance.buttonPress();
               },
               child: const Text('Haptic lightImpact'),
             ),

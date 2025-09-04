@@ -30,19 +30,23 @@ class MyTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      onTap: () {
-        // For password fields, give a small selection feedback when focused/tapped
-        if (obscureText) HapticService.instance.selection();
-      },
-      controller: controller,
-      obscureText: obscureText,
-      keyboardType: keyboardType,
-      validator: validator,
-      inputFormatters: inputFormatters,
-      decoration: InputDecoration(
-        hintText: hintText,
-        errorText: errorText, // <-- Set error text dynamically
+    return Semantics(
+      label: hintText,
+      hint: obscureText ? "Password field, double tap to edit" : "Text field, double tap to edit",
+      textField: true,
+      child: TextFormField(
+        onTap: () {
+          // For password fields, give a small selection feedback when focused/tapped
+          if (obscureText) HapticService.instance.buttonPress();
+        },
+        controller: controller,
+        obscureText: obscureText,
+        keyboardType: keyboardType,
+        validator: validator,
+        inputFormatters: inputFormatters,
+        decoration: InputDecoration(
+          hintText: hintText,
+          errorText: errorText, // <-- Set error text dynamically
         filled: true,
         fillColor: Colors.white,
         contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 14),
@@ -81,13 +85,14 @@ class MyTextField extends StatelessWidget {
           ),
           onPressed: () {
             // Feedback when toggling password visibility
-            HapticService.instance.selection();
+            HapticService.instance.buttonPress();
             if (onToggleVisibility != null) onToggleVisibility!();
           },
         )
             : null,
       ),
       onChanged: onChanged,
+    ),
     );
   }
 }

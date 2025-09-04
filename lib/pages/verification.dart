@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import '../widget/instructions_dialog.dart';
+import '../services/talkback_service.dart';
 import 'login_page.dart';
 import 'personalDetails_page.dart';
 
@@ -202,6 +203,7 @@ class _VerificationPage extends State<VerificationPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
+            TalkBackService.instance.speak("Going back to login");
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => LoginPage(onTap: () {})),

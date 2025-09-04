@@ -45,11 +45,11 @@ class FullImageViewer extends StatelessWidget {
                     content: const Text('Are you sure you want to delete this photo?'),
                     actions: [
                       TextButton(
-                        onPressed: () => Navigator.pop(context, false),
+                        onPressed: () { HapticService.instance.buttonPress(); Navigator.pop(context, false); },
                         child: const Text('Cancel'),
                       ),
                       TextButton(
-                        onPressed: () => Navigator.pop(context, true),
+                        onPressed: () { HapticService.instance.buttonPress(); Navigator.pop(context, true); },
                         child: const Text('Delete', style: TextStyle(color: Colors.red)),
                       ),
                     ],
@@ -76,12 +76,12 @@ class FullImageViewer extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 30),
-          onPressed: () { HapticService.instance.selection(); Navigator.pop(context); },
+          onPressed: () { HapticService.instance.buttonPress(); Navigator.pop(context); },
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.more_vert, color: Colors.white),
-            onPressed: () { HapticService.instance.selection(); _showOptions(context); },
+            onPressed: () { HapticService.instance.buttonPress(); _showOptions(context); },
           ),
         ],
       ),

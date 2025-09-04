@@ -4,6 +4,8 @@ import '../services/haptic_service.dart';
 void main() => runApp(MaterialApp(home: HapticTestPage()));
 
 class HapticTestPage extends StatelessWidget {
+  const HapticTestPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -12,9 +14,9 @@ class HapticTestPage extends StatelessWidget {
         child: ElevatedButton(
           child: Text('Test Haptics & Vibration'),
             onPressed: () async {
-            HapticService.instance.selection();
+            HapticService.instance.buttonPress();
             await Future.delayed(Duration(milliseconds: 300));
-            HapticService.instance.lightImpact();
+            HapticService.instance.buttonPress();
             await Future.delayed(Duration(milliseconds: 300));
             HapticService.instance.heavyImpactWithVibration();
             await Future.delayed(Duration(milliseconds: 300));

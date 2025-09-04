@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'services/haptic_service.dart';
+import 'services/talkback_service.dart';
 import 'package:provider/provider.dart';
 import 'components/text_size.dart';
 
@@ -23,6 +24,9 @@ void main() async {
 
   // Initialize haptics service
   await HapticService.instance.init();
+
+  // Initialize TalkBack service
+  await TalkBackService.instance.initialize();
 
   // Initialize local notifications
   const AndroidInitializationSettings initializationSettingsAndroid =

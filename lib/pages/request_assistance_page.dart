@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import '../services/haptic_service.dart';
+import '../services/talkback_service.dart';
 import '../services/sms_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
@@ -199,7 +200,7 @@ class HomePageContentState extends State<HomePageContent> {
 
   Future<void> _onRefresh() async {
     await Future.delayed(const Duration(seconds: 1));
-  HapticService.instance.selection();
+  HapticService.instance.buttonPress();
   _showPopUpDialog();
   }
 
@@ -1040,6 +1041,14 @@ class HomePageContentState extends State<HomePageContent> {
       appBar: AppBar(
         title: const Text("Request Assistance"),
         backgroundColor: Color.fromARGB(255, 250, 250, 250),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            HapticService.instance.buttonPress();
+            TalkBackService.instance.speak("Going back from request assistance");
+            Navigator.pop(context);
+          },
+        ),
       ),
           body: GestureDetector(
             onVerticalDragEnd: (details) {
@@ -1083,7 +1092,7 @@ class HomePageContentState extends State<HomePageContent> {
                     );
                   }).toList(),
                   onChanged: (value) {
-                    HapticService.instance.selection();
+                    HapticService.instance.buttonPress();
                     setState(() {
                       _selectedCategory = value;
                       _clearInputs();
@@ -1116,7 +1125,7 @@ class HomePageContentState extends State<HomePageContent> {
                   ),
                   const SizedBox(height: 10),
                   GestureDetector(
-                    onTap: () { HapticService.instance.selection(); _pickImage(); },
+                    onTap: () { HapticService.instance.buttonPress(); _pickImage(); },
                     child: Container(
                       padding: EdgeInsets.all(4), // Reduced padding to make the box smaller
                       decoration: BoxDecoration(
@@ -1155,7 +1164,7 @@ class HomePageContentState extends State<HomePageContent> {
                     children: [
                       Expanded(
                         child: GestureDetector(
-                          onTap: () { HapticService.instance.selection(); _selectDate(context, _dateController); },
+                          onTap: () { HapticService.instance.buttonPress(); _selectDate(context, _dateController); },
                           child: AbsorbPointer(
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -1166,6 +1175,9 @@ class HomePageContentState extends State<HomePageContent> {
                               ),
                               child: TextFormField(
                                 controller: _dateController,
+                                onTap: () {
+                                  TalkBackService.instance.speak("Date field, select a date");
+                                },
                                 decoration: InputDecoration(
                                   labelText: "Date",
                                   hintText: "Select Date",
@@ -1183,7 +1195,7 @@ class HomePageContentState extends State<HomePageContent> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: GestureDetector(
-                          onTap: () { HapticService.instance.selection(); _selectTime(context, _timeController); },
+                          onTap: () { HapticService.instance.buttonPress(); _selectTime(context, _timeController); },
                           child: AbsorbPointer(
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -1306,7 +1318,7 @@ class HomePageContentState extends State<HomePageContent> {
                         children: [
                           Expanded(
                             child: GestureDetector(
-                              onTap: () { HapticService.instance.selection(); _selectDate(context, _deliverDateController); },
+                              onTap: () { HapticService.instance.buttonPress(); _selectDate(context, _deliverDateController); },
                               child: AbsorbPointer(
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -1335,7 +1347,7 @@ class HomePageContentState extends State<HomePageContent> {
                           const SizedBox(width: 8),
                           Expanded(
                             child: GestureDetector(
-                              onTap: () { HapticService.instance.selection(); _selectTime(context, _timeController); },
+                              onTap: () { HapticService.instance.buttonPress(); _selectTime(context, _timeController); },
                               child: AbsorbPointer(
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -1378,7 +1390,7 @@ class HomePageContentState extends State<HomePageContent> {
                         children: [
                           Expanded(
                             child: GestureDetector(
-                              onTap: () { HapticService.instance.selection(); _selectDate(context, _pickupDateController); },
+                              onTap: () { HapticService.instance.buttonPress(); _selectDate(context, _pickupDateController); },
                               child: AbsorbPointer(
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -1407,7 +1419,7 @@ class HomePageContentState extends State<HomePageContent> {
                           const SizedBox(width: 8),
                           Expanded(
                             child: GestureDetector(
-                              onTap: () { HapticService.instance.selection(); _selectTime(context, _pickupTimeController); },
+                              onTap: () { HapticService.instance.buttonPress(); _selectTime(context, _pickupTimeController); },
                               child: AbsorbPointer(
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -1481,7 +1493,7 @@ class HomePageContentState extends State<HomePageContent> {
                   ),
                   const SizedBox(height: 10),
                   GestureDetector(
-                    onTap: () { HapticService.instance.selection(); _selectDate(context, _whenDateController); },
+                    onTap: () { HapticService.instance.buttonPress(); _selectDate(context, _whenDateController); },
                     child: AbsorbPointer(
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -1508,7 +1520,7 @@ class HomePageContentState extends State<HomePageContent> {
                   ),
                   const SizedBox(height: 10),
                   GestureDetector(
-                    onTap: () { HapticService.instance.selection(); _selectTime(context, _timeController); },
+                    onTap: () { HapticService.instance.buttonPress(); _selectTime(context, _timeController); },
                     child: AbsorbPointer(
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -1590,8 +1602,11 @@ class HomePageContentState extends State<HomePageContent> {
                   ),
                 ],
                 const SizedBox(height: 15),
-                ElevatedButton(
-  onPressed: _isSendingRequest ? null : () { HapticService.instance.lightImpact(); sendRequest(); },
+                Semantics(
+                  label: _isSendingRequest ? "Sending request" : "Send request",
+                  hint: "Submit your assistance request",
+                  child: ElevatedButton(
+  onPressed: _isSendingRequest ? null : () { HapticService.instance.buttonPress(); sendRequest(); },
   style: ElevatedButton.styleFrom(
     backgroundColor: const Color.fromARGB(255, 0, 48, 96),
     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -1606,8 +1621,9 @@ class HomePageContentState extends State<HomePageContent> {
       : const Text(
           "Send Request",
           style: TextStyle(color: Colors.white),
+        ),
+      ),
                 ),
-               ),
               ],
             ),
           ),
